@@ -32,7 +32,7 @@ stocks = stocks.stack().reset_index()
 stocks.to_csv("mystocks.csv", index=False)
 """
 #Reading the local file 
-stocks = pd.read_csv("mystocks.csv")
+stocks = pd.read_csv(r"Dash_apps\Stocks_reader\mystocks.csv")
 
 #The print line is used just to have a look of the Df in the terminal
 #print(stocks[:15])
@@ -42,7 +42,7 @@ stocks = pd.read_csv("mystocks.csv")
 #WARNING: dbc.Container will not work if dbc.theme is not declared
 #meta_tags are used to ensure that the app is responsive on mobile devices
 app =  dash.Dash(__name__, 
-                 external_stylesheets= [dbc.themes.COSMO],
+                 external_stylesheets= [dbc.themes.SOLAR],
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=1.0'}]
                  )
@@ -72,7 +72,7 @@ card_two = dbc.Card(
             html.H6("Please choose the stocks for which you’d like to view the closing values in the histogram", className="card-subtitle"),
             html.Br(),
             dcc.Checklist(id        ='my-checklist', 
-                        value     = stocks["Symbols"].unique()[0:3],
+                        value     = stocks["Symbols"].unique()[0:5],
                         options   = [{"label": x,"value": x} for x in sorted(stocks["Symbols"].unique())],
                         inline    = True,
                         inputStyle={"margin-left":"6px", "margin-right": "2px"}
@@ -98,6 +98,18 @@ app.layout = dbc.Container([
                         style={'textAlign': 'center', 'color': '#457B9D', 'font-family': 'Trebuchet MS, sans-serif'}
                         ),
                 width = 12)
+            ]),
+    dbc.Row([
+        dbc.Col([
+                dcc.Dropdown(id     = "my-dpdn0-stks",
+                            multi   = False,
+                            value   = sorted(stocks["Symbols"].unique())[1], 
+                            options = [{"label": x,"value": x} for x in sorted(stocks["Symbols"].unique())]
+                            ),
+                dcc.Graph(id     = "candle-stk",
+                          figure = {}
+                         )
+                ])
             ]),
     dbc.Row([
         dbc.Col([
@@ -128,22 +140,9 @@ app.layout = dbc.Container([
                             controls=False,
                             width="100%",
                                  ),
-                        ]#,style={"width": "24rem"}
-                        )
+                        ])
                 ], width = {"size":6, "order":1}
                 )
-            ]),
-    dbc.Row([
-        dbc.Col([
-                dcc.Dropdown(id     = "my-dpdn0-stks",
-                            multi   = False,
-                            value   = sorted(stocks["Symbols"].unique())[1], 
-                            options = [{"label": x,"value": x} for x in sorted(stocks["Symbols"].unique())]
-                            ),
-                dcc.Graph(id     = "candle-stk",
-                          figure = {}
-                         )
-                ])
             ]),
     dbc.Row([
         dbc.Col([
@@ -156,7 +155,7 @@ app.layout = dbc.Container([
                         figure = {}
                         ),
                 ],
-                width = {"size":6, "order":2}),
+                width = {"size":6, "order":1}),
         dbc.Col([
                 dcc.Dropdown(id      = "my-dpdn2-stks",
                              multi   = True,
@@ -168,9 +167,10 @@ app.layout = dbc.Container([
                         ),
             
                 ],
-                width = {"size":6, "order":1})
+                width = {"size":6, "order":2})
             ]),
-], fluid = True
+], fluid = True,
+className="dbc"
 )
 
 # Candlestick chart - Single
@@ -187,7 +187,6 @@ def candlestick_plot(selected_stock):
                 high=dff['High'],
                 low=dff['Low'],
                 close=dff['Close'])],
-                #template=template
                 )
         return fig
 
@@ -207,11 +206,10 @@ def histogram_plot(selected_stonks,date_set):
                            y='Close',
                            color= "Symbols",
                            text_auto= True,
-                           #template=template,
                            )
         return fig
 
-# Line chart - Sinple
+# Line chart - Single
 @callback(
     Output("line-fig-stk", "figure"),
     Input("my-dpdn-stks", 'value')
@@ -222,7 +220,6 @@ def single_line_plot(selected_stonk):
         fig = px.line(dff, 
                       x='Date', 
                       y='High',
-                      #template=template
                       )
         return fig
 
@@ -238,7 +235,6 @@ def multiple_lines_plot(selected_stonks):
                       x="Date",
                       y="Close",
                       color= "Symbols",
-                      #template=template,
                       hover_data=["Open","Close","High","Low"])
         return fig
 
