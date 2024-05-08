@@ -17,7 +17,7 @@ layout = go.Layout(template= pio.templates["solar"])
 
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
 
-"""
+#"""
 #Defining a data range
 start  = dt.datetime(2023,1,1)
 end    = dt.datetime(2023,12,31)
@@ -33,12 +33,11 @@ stocks = web.DataReader(
 stocks = stocks.stack().reset_index()
 
 #The next lines will download the Df as a CSV file in a local environment. 
-#This approach prevents overloading the API with requests every time we run the script, which could potentially lead to getting 
-#banned from the API
-stocks.to_csv("mystocks.csv", index=False)
-"""
+#This approach prevents overloading the API with requests every time we run the script, which could potentially lead to getting banned from the API
+# -----------> Unhash the line 38 and 40 to enable saving the csv to a local environment, and reading it from it <-------------
+#stocks.to_csv("mystocks.csv", index=False)
 #Reading the local file 
-stocks = pd.read_csv(r"Dash_apps\Stocks_reader\mystocks.csv")
+#stocks = pd.read_csv(r"Dash_apps\Stocks_reader\mystocks.csv")
 #"""
 
 title= dbc.Col(
@@ -114,12 +113,7 @@ sources = html.Div(
                 ),
                 html.A(
                     "Code (.py file) |   ",
-                    href="https://plotly.com/python/templates/",
-                    target="_blank",
-                ),
-                html.A(
-                    "Jupyter Notebook for this App",
-                    href="https://plotly.com/python/plotly-express/",
+                    href="https://github.com/Salvatore-Rocha/My-Dash-Apps/blob/f22f6ab40598472d71012e9a2e9111d7b7dfb508/Dash_apps/Styling/Styling_stocks_plots.py",
                     target="_blank",
                 ),
             ]
@@ -139,9 +133,7 @@ app.layout = dbc.Container([
             html.H2("A dashboard to analyzse Stock Trends"),
             html.P("This dashboard was created using the Dash app and Python libraries to download and parse stock data into \
                     dataframes. It's designed to highlight the interactivity provided by the Dash app for plots. The stocks and dates \
-                    were chosen arbitrarily and can be easily switched in the main code. Additionally, a Jupyter notebook is \
-                    provided to offer insights into the general code approach and demonstrate how functions and dataframes \
-                    look under the hood. You can find the link to the files at the bottom.")
+                    were chosen arbitrarily and can be easily switched in the main code. You can find the link to the file at the bottom.")
                 ],
                 width = 3
                 ),
